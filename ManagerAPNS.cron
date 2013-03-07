@@ -1,0 +1,1 @@
+*/5 * * * * nice /usr/bin/php -f /absolute/path/to/apns-all.php fetch > /absolute/path/to/apns.log 2>&1 &
