@@ -15,3 +15,14 @@ Installation:
 Tip: Remember to set your registered device to "sandbox" mode while you are developing the App.  
   
 Developed by Abel Pascual - abelpascual@gmail.com
+
+<p>Included features:
+		<ul>
+			<li>MultiApp support</li>
+			<li>User authentication</li>
+			<li>Devices list</li>
+			<li>Messages list</li>
+			<li>History</li>
+			<li>Mobile navigation</li>
+		</ul>
+</p>
