@@ -176,6 +176,7 @@
 			null,
 			null,
 			null,
+			null,
 			null
 			],
 			"aaSorting": [[ 1, "desc" ]]
