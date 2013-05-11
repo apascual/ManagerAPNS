@@ -6,7 +6,7 @@ CREATE TABLE `apns_device_history` (
   `appname` varchar(255) NOT NULL,
   `appversion` varchar(25) default NULL,
   `deviceuid` char(40) NOT NULL,
-  `devicetoken` char(64) NOT NULL,
+  `devicetoken` char(64) NULL,
   `devicename` varchar(255) NOT NULL,
   `devicemodel` varchar(100) NOT NULL,
   `deviceversion` varchar(25) NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE `apns_devices` (
   `appname` varchar(255) NOT NULL,
   `appversion` varchar(25) default NULL,
   `deviceuid` char(40) NOT NULL,
-  `devicetoken` char(64) NOT NULL,
+  `devicetoken` char(64) NULL,
   `devicename` varchar(255) NOT NULL,
   `devicemodel` varchar(100) NOT NULL,
   `deviceversion` varchar(25) NOT NULL,
@@ -51,7 +51,8 @@ CREATE TABLE `apns_devices` (
   `created` datetime NOT NULL,
   `modified` timestamp NOT NULL default '0000-00-00 00:00:00' on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`pid`),
-  UNIQUE KEY `appname` (`appname`,`deviceuid`),
+  UNIQUE KEY `appname_uid` (`appname`,`deviceuid`),
+  UNIQUE KEY `appname_token` (`appname`,`devicetoken`),
   KEY `clientid` (`clientid`),
   KEY `devicetoken` (`devicetoken`),
   KEY `devicename` (`devicename`),
@@ -113,4 +114,4 @@ CREATE TABLE IF NOT EXISTS `apns_users` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Users that can login';
 
 INSERT INTO `apns_users` (`id`, `name`, `password`) VALUES
-(1, 'admin', 'admin');
+(1, 'admin', '21232f297a57a5a743894a0e4a801fc3');
