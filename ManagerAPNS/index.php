@@ -24,7 +24,8 @@
     if(isset($_POST['submit']))
     {
        $name = mysql_real_escape_string($_POST['username']); // The function mysql_real_escape_string() stops hackers!
-       $pass = mysql_real_escape_string($_POST['password']); // We won't use MD5 encryption here because it is the simple tutorial, if you don't know what MD5 is, dont worry!
+       $passmd5 = md5($_POST['password']); // The entered password is encrypted with MD5 encryption.
+       $pass = mysql_real_escape_string($passmd5);
        $mysql = mysql_query("SELECT * FROM apns_users WHERE name = '{$name}' AND password = '{$pass}'"); // This code uses MySQL to get all of the users in the database with that username and password.
        if(mysql_num_rows($mysql) < 1)
        {

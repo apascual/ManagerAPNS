@@ -114,4 +114,4 @@ CREATE TABLE IF NOT EXISTS `apns_users` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Users that can login';
 
 INSERT INTO `apns_users` (`id`, `name`, `password`) VALUES
-(1, 'admin', 'admin');
+(1, 'admin', '21232f297a57a5a743894a0e4a801fc3');
