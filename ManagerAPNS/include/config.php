@@ -9,10 +9,11 @@
 	
 	class EasyAPNSConfiguration {
 		private $appList = array();
-		public $dbUsername = "user"; //TO CHANGE
-		public $dbPassword = "pass";//TO CHANGE
-		public $dbName = "database";//TO CHANGE
+		public $dbUsername = "DB_USERNAME"; //TO CHANGE
+		public $dbPassword = "DB_PASS";//TO CHANGE
+		public $dbName = "DB_NAME";//TO CHANGE
 		public $dbAddress = "localhost";//TO CHANGE
-		public $absolutePath = "/absolute/path/to/install/dir/";//TO CHANGE
+		public $logFile = "/log/APNSLog.log";
+		public $absolutePath = "/var/www/httpdocs/MY_DOMAIN/public_html/ManagerAPNS";
 	}
 ?>

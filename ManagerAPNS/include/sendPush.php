@@ -7,7 +7,13 @@
  * @link https://github.com/apascual/ManagerAPNS
  */
  
-	session_start(); // NEVER forget this!
+ error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ 
+ 	if(!session_id()) {
+		session_start(); // NEVER forget this!
+	}
+
 	if(!isset($_SESSION['loggedin']))
 	{
 		header("Location: index.php");
@@ -26,14 +32,23 @@
 	}
 	
     $appname = $_POST['appname'];
-        
-    $production = $config->absolutePath."/certs/".$appname."/production.pem";
-    $sandbox = $config->absolutePath."/certs/".$appname."/sandbox.pem";
+	require_once($config->absolutePath."/certs/".$appname."/cert_config.php");
+    
+    $production = $cert_config['production_cert'];
+    $sandbox = $cert_config['development_cert'];
         
     $db = new DbConnect($config->dbAddress, $config->dbUsername, $config->dbPassword, $config->dbName);
 	$db->show_errors();
+
+	$apns= new APNS(
+		$db, 
+		NULL, 
+		$production, 
+		$sandbox, 
+		$config->absolutePath.$config->logFile, 
+		$cert_config['passphrase']
+	);
 	
-	$apns= new APNS($db, NULL, $production, $sandbox);
 	$pidList = explode(';', $_POST['pid']);
 
 	settype($_POST['badge'], "int");
@@ -41,7 +56,7 @@
 		$pid = $value;
 		settype($pid, "int");
 		
-		if($_POST['date'])
+		if(array_key_exists('date', $_POST))
 			$apns->newMessage($pid,$_POST['date']);
 		else
 			$apns->newMessage($pid);
@@ -49,7 +64,7 @@
 		$apns->addMessageAlert($_POST['message']);
 		$apns->addMessageBadge($_POST['badge']);
 		$apns->addMessageSound($_POST['sound']);
-        $apns->addMessageCustom('url', $_POST['url']);
+        $apns->addMessageCustom('url', (array_key_exists('url', $_POST) ? $_POST['url'] : null));
 		$apns->queueMessage();
 	}
 ?>

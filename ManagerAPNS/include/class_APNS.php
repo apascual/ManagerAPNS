@@ -1,5 +1,8 @@
 <?php
-session_start(); 
+
+if(!session_id()) {
+	session_start(); // NEVER forget this!
+}
 
 #################################################################################
 ## Developed by Manifest Interactive, LLC                                      ##
@@ -190,7 +193,7 @@ class APNS {
 	 * @param string $logPath Path to the log file.
 	 * @access 	public
 	 */
-	function __construct($db, $args=NULL, $certificate=NULL, $sandboxCertificate=NULL, $logPath=NULL) {
+	function __construct($db, $args=NULL, $certificate=NULL, $sandboxCertificate=NULL, $logPath=NULL, $certificate_password=NULL) {
 
 		if(!empty($certificate) && file_exists($certificate))
 		{
@@ -209,12 +212,14 @@ class APNS {
 			'production'=>array(
 				'certificate'=>$this->certificate,
 				'ssl'=>$this->ssl,
-				'feedback'=>$this->feedback
+				'feedback'=>$this->feedback, 
+				'certificate_password'=>$certificate_password
 			),
 			'sandbox'=>array(
 				'certificate'=>$this->sandboxCertificate,
 				'ssl'=>$this->sandboxSsl,
-				'feedback'=>$this->sandboxFeedback
+				'feedback'=>$this->sandboxFeedback, 
+				'certificate_password'=>$certificate_password
 			)
 		);
 		if ($logPath !== null) {
@@ -523,6 +528,11 @@ class APNS {
 	private function _connectSSLSocket($development) {
 		$ctx = stream_context_create();
 		stream_context_set_option($ctx, 'ssl', 'local_cert', $this->apnsData[$development]['certificate']);
+		if ($this->apnsData[$development]['certificate_password'] != NULL && 
+			$this->apnsData[$development]['certificate_password']) {
+			stream_context_set_option($ctx, 'ssl', 'passphrase', $this->apnsData[$development]['certificate_password']);
+		}
+		
 		$this->sslStreams[$development] = stream_socket_client($this->apnsData[$development]['ssl'], $error, $errorString, 100, (STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT), $ctx);
 		if(!$this->sslStreams[$development]){
 			$this->_triggerError("Failed to connect to APNS: {$error} {$errorString}.");
@@ -662,6 +672,10 @@ class APNS {
 	 */
 	private function _checkFeedback($development){
 		$ctx = stream_context_create();
+		if ($this->apnsData[$development]['certificate_password'] != NULL && 
+			$this->apnsData[$development]['certificate_password']) {
+			stream_context_set_option($ctx, 'ssl', 'passphrase', $this->apnsData[$development]['certificate_password']);
+		}
 		stream_context_set_option($ctx, 'ssl', 'local_cert', $this->apnsData[$development]['certificate']);
 		stream_context_set_option($ctx, 'ssl', 'verify_peer', false);
 		$fp = stream_socket_client($this->apnsData[$development]['feedback'], $error,$errorString, 100, (STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT), $ctx);
