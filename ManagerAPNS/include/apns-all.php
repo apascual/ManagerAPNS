@@ -16,7 +16,6 @@ $config = new EasyAPNSConfiguration();
 $db = new DbConnect($config->dbAddress, $config->dbUsername, $config->dbPassword, $config->dbName);
 $db->show_errors();
 
-
 $db_aux = mysql_connect($config->dbAddress, $config->dbUsername, $config->dbPassword);
 mysql_select_db($config->dbName, $db_aux);
 	
@@ -27,8 +26,12 @@ while($row = mysql_fetch_assoc($queryRessource_DisinctAppName)) {
 }
 
 foreach ($appNameList as $appname) {
-    $production = $config->absolutePath."/certs/".$appname."/production.pem";
-    $sandbox = $config->absolutePath."/certs/".$appname."/sandbox.pem";
+	include_once($config->absolutePath."/certs/".$appname."/cert_config.php");
+	
+    $production = $cert_config['production_cert'];
+    $sandbox = $cert_config['development_cert'];
+    $log = $config->absolutePath.$config->logFile;
+    $passPhrase = $cert_config['passphrase'];
         
 	// FETCH $_GET OR CRON ARGUMENTS TO AUTOMATE TASKS
 	$args = (!empty($_GET)) ? $_GET:array('task'=>$argv[1]);
@@ -36,6 +39,6 @@ foreach ($appNameList as $appname) {
 	$args['appname']=$appname;
 
 	// CREATE APNS OBJECT, WITH DATABASE OBJECT AND ARGUMENTS
-	$apns= new APNS($db, $args, $production, $sandbox);
+	$apns= new APNS($db, $args, $production, $sandbox, $log, $passPhrase);
 }
 ?>

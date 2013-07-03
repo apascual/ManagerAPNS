@@ -24,9 +24,10 @@
 	}
 
 	$appname = $_POST['appname'];
-	
-	$production = $config->absolutePath."/certs/".$appname."/production.pem";
-	$sandbox = $config->absolutePath."/certs/".$appname."/sandbox.pem";
+	require_once($config->absolutePath."/certs/".$appname."/cert_config.php");
+    
+    $production = $cert_config['production_cert'];
+    $sandbox = $cert_config['development_cert'];
 	
 	$db = new DbConnect($config->dbAddress, $config->dbUsername, $config->dbPassword, $config->dbName);
 	$db->show_errors();
@@ -34,6 +35,13 @@
 	$args = array();
 	$args["task"] = "fetch";
 	$args["appname"]=$appname;
-	$apns= new APNS($db, $args, $production, $sandbox);
+	$apns= new APNS(
+		$db, 
+		$args, 
+		$production, 
+		$sandbox, 
+		$config->absolutePath.$config->logFile, 
+		$cert_config['passphrase']
+	);
 
 ?>
