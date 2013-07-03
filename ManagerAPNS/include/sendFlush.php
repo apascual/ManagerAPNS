@@ -7,7 +7,13 @@
  * @link https://github.com/apascual/ManagerAPNS
  */
  
-	session_start(); // NEVER forget this!
+ error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ 
+ 	if(!session_id()) {
+		session_start(); // NEVER forget this!
+	}
+	
 	if(!isset($_SESSION['loggedin']))
 	{
 		header("Location: index.php");
@@ -23,9 +29,10 @@
 	}
 
 	$appname = $_POST['appname'];
-	
-	$production = $config->absolutePath."/certs/".$appname."/production.pem";
-	$sandbox = $config->absolutePath."/certs/".$appname."/sandbox.pem";
+	require_once($config->absolutePath."/certs/".$appname."/cert_config.php");
+    
+    $production = $cert_config['production_cert'];
+    $sandbox = $cert_config['development_cert'];
 	
 	$db = new DbConnect($config->dbAddress, $config->dbUsername, $config->dbPassword, $config->dbName);
 	$db->show_errors();
@@ -33,6 +40,14 @@
 	$args = array();
 	$args["task"] = "flush";
 	$args["appname"]=$appname;
-	$apns= new APNS($db, $args, $production, $sandbox);
+
+	$apns= new APNS(
+		$db, 
+		$args, 
+		$production, 
+		$sandbox, 
+		$config->absolutePath.$config->logFile, 
+		$cert_config['passphrase']
+	);
 
 ?>
